@@ -1,0 +1,19 @@
+{
+  "dependencies": [
+    "boost-log",
+    "gtest",
+    "libjpeg-turbo",
+    "libpng",
+    "pkgconf",
+    "tomlplusplus",
+    "zlib",
+    "boost-gil"
+  ],
+  "builtin-baseline": "5e5d0e1cd7785623065e77eff011afdeec1a3574",
+  "overrides": [
+    {
+      "name": "tomlplusplus",
+      "version": "3.1.0"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+# generated wallpapers are stored in %TEMP%/brilliant_wp
+# the program should automatically clean up this directory 
+
+transitionDelay = 30 #Optional global transition delay in minutes
+
+[[monitors]]
+wallpapers = [
+    "C:/Users/6davi/Pictures/backgrounds",
+    "C:/Users/6davi/Downloads/1581884.png"
+]
+#transitionDelay = 20 #optional individual transition delay in minutes
+#index = 0 #optional index id for monitor - currently unsupported

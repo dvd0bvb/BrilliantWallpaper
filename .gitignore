@@ -1,0 +1,6 @@
+build/*
+.cache/*
+out/*
+CMakePresets.json
+.vs/*
+vcpkg_installed/*

@@ -1,0 +1,14 @@
+target_sources(${PROJECT_NAME} PRIVATE
+	"${CMAKE_CURRENT_SOURCE_DIR}/ComLib.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/WallpaperSetterImpl.cpp"
+)
+
+target_include_directories(${PROJECT_NAME} PRIVATE BEFORE
+	"${CMAKE_CURRENT_SOURCE_DIR}/Win"
+)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE 
+	WINDOWS_LEAN_AND_MEAN
+	NOMINMAX
+	_WIN32_WINNT=0x0A00
+)
