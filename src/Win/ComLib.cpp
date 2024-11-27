@@ -1,12 +1,14 @@
-#include <objbase.h>
+/**
+ *
+ *  @file      ComLib.cpp
+ *  @author    David Brill
+ *  @copyright © David Brill, 2024. All right reserved.
+ *
+ */
 #include "ComLib.hpp"
 
-ComLib::ComLib() 
-{
-  CoInitializeEx(nullptr, COINIT_MULTITHREADED);
-}
+#include <objbase.h>
 
-ComLib::~ComLib()
-{
-  CoUninitialize();
-}
+ComLib::ComLib() { CoInitializeEx(nullptr, COINIT_MULTITHREADED); }
+
+ComLib::~ComLib() { CoUninitialize(); }

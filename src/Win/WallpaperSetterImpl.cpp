@@ -1,74 +1,87 @@
-#include <comutil.h>
-#include <comdef.h>
+/**
+ *
+ *  @file      WallpaperSetterImpl.cpp
+ *  @author    David Brill
+ *  @copyright © David Brill, 2024. All right reserved.
+ *
+ *  Implements the WallpaperSetterImpl class
+ */
 #include "WallpaperSetterImpl.hpp"
+
+#include <comdef.h>
+#include <comutil.h>
+
 #include "../Log.hpp"
 
 namespace brilliant {
   namespace wp {
-    //TODO: create error codes/categories so these can throw instead of logging errors
+    // TODO: create error codes/categories so these can throw instead of logging
+    // errors
 
-    WallpaperSetterImpl::WallpaperSetterImpl() :
-      manager([]() -> IDesktopWallpaper* {
-        IDesktopWallpaper* ptr = nullptr;
-        const auto result = CoCreateInstance(CLSID_DesktopWallpaper, nullptr, CLSCTX_ALL, IID_PPV_ARGS(&ptr));
-        CheckError(result);
-        return ptr;
-      }(), [](IDesktopWallpaper* ptr) {
-        if (ptr)
-        {
-          ptr->Release();
-        }
-      })
-    {
+    WallpaperSetterImpl::WallpaperSetterImpl()
+        : manager(
+              []() -> IDesktopWallpaper* {
+                IDesktopWallpaper* ptr = nullptr;
+                const auto result =
+                    CoCreateInstance(CLSID_DesktopWallpaper, nullptr,
+                                     CLSCTX_ALL, IID_PPV_ARGS(&ptr));
+                CheckError(result);
+                return ptr;
+              }(),
+              [](IDesktopWallpaper* ptr) {
+                if (ptr) {
+                  ptr->Release();
+                }
+              }) {}
 
-    }
-
-    void WallpaperSetterImpl::setWallpaper(uint32_t monitorIndex, const std::filesystem::path& filepath)
-    {
+    void WallpaperSetterImpl::setWallpaper(
+        uint32_t monitorIndex, const std::filesystem::path& filepath) {
       auto monitorName = getMonitorName(monitorIndex);
-      const auto result = manager->SetWallpaper(nullptr, filepath.native().c_str());
+      const auto result =
+          manager->SetWallpaper(nullptr, filepath.native().c_str());
       CheckError(result);
-      log(severity_level::info, "Successfully set wallpaper to {} on monitor {}", filepath.string(), monitorIndex);
+      log(severity_level::info,
+          "Successfully set wallpaper to {} on monitor {}", filepath.string(),
+          monitorIndex);
     }
 
-    std::pair<uint32_t, uint32_t> WallpaperSetterImpl::getResolution(uint32_t monitorIndex) 
-    {
+    std::pair<uint32_t, uint32_t> WallpaperSetterImpl::getResolution(
+        uint32_t monitorIndex) {
       auto monitorName = getMonitorName(monitorIndex);
 
       RECT rect{};
       const auto result = manager->GetMonitorRECT(monitorName.data(), &rect);
       CheckError(result);
-      log(severity_level::debug, "GetMonitorRECT() returned ok. Rect: t {}, l {}, b {}, r {}", rect.top, rect.left, rect.bottom, rect.right);
-      return { rect.right, rect.bottom };
+      log(severity_level::debug,
+          "GetMonitorRECT() returned ok. Rect: t {}, l {}, b {}, r {}",
+          rect.top, rect.left, rect.bottom, rect.right);
+      return {rect.right, rect.bottom};
     }
 
-    std::wstring WallpaperSetterImpl::getMonitorName(uint32_t monitorIndex)
-    {
+    std::wstring WallpaperSetterImpl::getMonitorName(uint32_t monitorIndex) {
       wchar_t* ptr = nullptr;
-      const auto result = manager->GetMonitorDevicePathAt(monitorIndex, &ptr); //windows gives me hiv
+      const auto result = manager->GetMonitorDevicePathAt(
+          monitorIndex, &ptr);  // windows gives me hiv
       std::wstring monitorName;
-      if (ptr)
-      {
+      if (ptr) {
         monitorName.assign(ptr);
       }
-      //need to call free even if the error check fails...
+      // need to call free even if the error check fails...
       ::CoTaskMemFree(ptr);
       CheckError(result);
-      log(severity_level::debug, "GetMonitorDevicePath() returned ok. Monitor index: {}", monitorIndex);
+      log(severity_level::debug,
+          "GetMonitorDevicePath() returned ok. Monitor index: {}",
+          monitorIndex);
       return monitorName;
     }
 
-    void WallpaperSetterImpl::CheckError(HRESULT result)
-    {
-      try
-      {
+    void WallpaperSetterImpl::CheckError(HRESULT result) {
+      try {
         _com_util::CheckError(result);
-      }
-      catch (const _com_error& e)
-      {
+      } catch (const _com_error& e) {
         throw std::runtime_error(e.ErrorMessage());
       }
     }
 
-  }
-}
+  }  // namespace wp
+}  // namespace brilliant
