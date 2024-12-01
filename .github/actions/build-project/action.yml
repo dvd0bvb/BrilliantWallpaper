@@ -35,20 +35,28 @@ runs:
         shell-name: ${{ inputs.shell-name }}
         with-msan: ${{ inputs.building-msan }}
 
-    - name: Install gtest 
-      uses: ./.github/actions/install-gtest
-      with:
-        build-type: Release
-        dynamic-msvc-runtime: "true"
-        shell-name: ${{ inputs.shell-name }}
-        with-msan: ${{ inputs.building-msan }}
+    # - name: Install gtest 
+    #   uses: ./.github/actions/install-gtest
+    #   with:
+    #     build-type: Release
+    #     dynamic-msvc-runtime: "true"
+    #     shell-name: ${{ inputs.shell-name }}
+    #     with-msan: ${{ inputs.building-msan }}
     
+    - uses: johnwason/vcpkg-action@v6
+      id: vcpkg
+      with:
+        manifest-dir: ${{ github.workspace }}
+        triplet: x64-windows-release
+        token: ${{ github.token }}
+        github-binarycache: true
+
     - uses: ./.github/actions/config-cmake
       with: 
         cpp-compiler: ${{ inputs.cpp-compiler }}
         c-compiler: ${{ inputs.c-compiler }}
         build-type: ${{ inputs.build-type }}
-        cmake-config-args: ${{ inputs.cmake-config-args }}        
+        cmake-config-args: ${{ inputs.cmake-config-args }} ${{ steps.vcpkg.outputs.vcpkg-cmake-config }}
 
     - name: Build
       working-directory: ${{ github.workspace }}
@@ -57,8 +65,3 @@ runs:
         cmake --build build 
         --config ${{ inputs.build-type }} 
         --target ${{ steps.constants.outputs.project-name }}_TEST
-
-    - name: Test
-      working-directory: ${{ github.workspace }}/build
-      shell: ${{ inputs.shell-name }}
-      run: ctest --build-config ${{ inputs.build-type }}

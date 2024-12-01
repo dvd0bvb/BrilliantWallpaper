@@ -29,21 +29,21 @@ jobs:
             c_compiler: cl
             cpp_compiler: cl
             shell: pwsh
-          - os: ubuntu-24.04
-            c_compiler: gcc
-            cpp_compiler: g++
-            shell: bash
-          - os: ubuntu-24.04
-            c_compiler: clang
-            cpp_compiler: clang++
-            shell: bash
+          # - os: ubuntu-24.04
+          #   c_compiler: gcc
+          #   cpp_compiler: g++
+          #   shell: bash
+          # - os: ubuntu-24.04
+          #   c_compiler: clang
+          #   cpp_compiler: clang++
+          #   shell: bash
         exclude:
           - os: windows-latest
             c_compiler: gcc
           - os: windows-latest
             c_compiler: clang
-          - os: ubuntu-24.04
-            c_compiler: cl
+          # - os: ubuntu-24.04
+          #   c_compiler: cl
 
     steps:
     - uses: actions/checkout@v4
@@ -54,3 +54,8 @@ jobs:
         cpp-compiler: ${{ matrix.cpp_compiler }}
         build-type: ${{ matrix.build_type }}
         shell-name: ${{ matrix.shell }}
+
+    - name: Test
+      working-directory: ${{ github.workspace }}/build
+      shell: ${{ inputs.shell-name }}
+      run: ctest --build-config ${{ inputs.build-type }}

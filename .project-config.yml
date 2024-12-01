@@ -1,4 +1,4 @@
-project-name: project
+project-name: BrilliantWallpaper
 build-shared: false
-build-executable: false
+build-executable: true
 build-header-only: false
