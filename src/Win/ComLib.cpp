@@ -9,6 +9,10 @@
 
 #include <objbase.h>
 
-ComLib::ComLib() { CoInitializeEx(nullptr, COINIT_MULTITHREADED); }
+namespace brilliant {
+  namespace wp {
+    ComLib::ComLib() { CoInitializeEx(nullptr, COINIT_MULTITHREADED); }
 
-ComLib::~ComLib() { CoUninitialize(); }
+    ComLib::~ComLib() { CoUninitialize(); }
+  }  // namespace wp
+}  // namespace brilliant

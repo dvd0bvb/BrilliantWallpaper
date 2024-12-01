@@ -1,0 +1,14 @@
+transitionDelay = 10
+
+[[monitors]]
+wallpapers = [
+    "testfile.png"
+]
+transitionDelay = 20
+index = 2
+
+[[monitors]]
+wallpapers = [
+    "anothertestfile.jpg",
+    "dir/onemorefile.bmp"
+]

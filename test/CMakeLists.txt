@@ -4,13 +4,15 @@ include(${CMAKE_SOURCE_DIR}/cmake/MsvcRuntime.cmake)
 
 set(TEST_TARGET ${PROJECT_NAME}_TEST)
 
-# TODO: add sources and dependencies here
-set(TEST_SOURCES test.cpp # source 1
-    # ...
+set(TEST_SOURCES
+  TestTomlConfigBuilder.cpp
+  TestImageProcessing.cpp
 )
-set(TEST_DEPENDENCIES # dep 1
-    # ...
-)
+
+set(TEST_DEPENDENCIES ${PROJECT_NAME}_ARCHIVE)
+
+# copy files used for unit tests to bin directory
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/files DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
 add_executable(${TEST_TARGET} ${TEST_SOURCES})
 
@@ -25,12 +27,19 @@ set_sanitizer_options(${TEST_TARGET})
 set_msvc_runtime(${TEST_TARGET})
 
 find_package(GTest REQUIRED)
-include(GoogleTest)
-# TODO: Add other find_package calls here
 
 target_link_libraries(
-  ${TEST_TARGET} PRIVATE GTest::gmock GTest::gtest GTest::gtest_main
-                         ${TEST_DEPENDENCIES}
+  ${TEST_TARGET} PRIVATE GTest::gmock GTest::gtest 
+	# use custom main() for msvc since tests are not added correctly with gtest_discover_tests()
+	$<$<NOT:${MSVC}>:GTest::gtest_main> 
+	${TEST_DEPENDENCIES} 
 )
 
+if (${MSVC})
+  add_subdirectory(Win)
+else()
+  # TODO: add test directory for not windows
+endif()
+
+include(GoogleTest)
 gtest_discover_tests(${TEST_TARGET})

@@ -116,22 +116,17 @@ namespace brilliant {
       static ImageInfoType getImageInfo(const std::filesystem::path& path,
                                         const ImageTags& tags);
 
-      //! The image tag type
-      ImageTags tags;
-
       //! The boost::gil reader backend
       ImageInfoType info;
     };
 
-    // TODO: get a better way to id image type
     /**
-     * @brief Get the image type from its file extension
+     * @brief Get the image file type by reading the file header
      * @param path The path to the image
      * @return An optional holding a variant containing the image tag type if
      * successful. A nullopt otherwise.
      */
-    std::optional<ImageTags> getImageTypeFromExt(
-        const std::filesystem::path& path);
+    std::optional<ImageTags> getImageType(const std::filesystem::path& path);
 
     /**
      * @brief Scale an image's dimensions in pixels based on the desired height

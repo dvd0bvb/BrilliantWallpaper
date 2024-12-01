@@ -57,10 +57,15 @@ This repo was seeded from my [BrilliantCmake](https://github.com/dvd0bvb/Brillia
 Short term goals include
 - Write unit tests and automate building and testing with github workflows.
 - Get Asan builds working with Windows.
+- Support for vertical monitors
+- Support for additional image formats, eg: webp
 
 Longer term goals include
 - Linux support - this is not something I've looked into at all yet. I have tried to sequester all Windows specific code to the Win subdirectory and support possible extension via the WallpaperSetter class.
 - Tsan and possibly Msan builds.
+- Cross platform GUI to change settings on the fly
+- Daemonizing the app
+- Smarter image gen. Eg: If last image in random set doesn't fit, see if another will. Scale images to similar size.
 
 ## Supporting the project
 

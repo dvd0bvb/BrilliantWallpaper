@@ -7,8 +7,9 @@
  *  Implements main
  */
 
-// TODO remove this from here for cross compatibility
+#ifdef WIN32
 #include <sdkddkver.h>
+#endif 
 
 #include "App.hpp"
 #include "Log.hpp"

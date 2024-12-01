@@ -1,0 +1,5 @@
+transitionDelay = 10
+
+[[monitors]]
+transitionDelay = 20
+index = 2

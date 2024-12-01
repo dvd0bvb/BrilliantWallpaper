@@ -8,14 +8,13 @@
  */
 #include "App.hpp"
 
-#include <filesystem>
-#include <ranges>
-#include <string_view>
-
 #include <boost/asio.hpp>
 #include <boost/gil.hpp>
 #include <boost/gil/extension/numeric/resample.hpp>
 #include <boost/gil/extension/numeric/sampler.hpp>
+#include <filesystem>
+#include <ranges>
+#include <string_view>
 
 #include "GetInstallPath.hpp"
 #include "Log.hpp"
@@ -62,7 +61,7 @@ namespace brilliant {
       for (auto& [i, monitor] : config.monitors) {
         for (auto iter = monitor.backgroundPaths.begin();
              iter != monitor.backgroundPaths.end();) {
-          if (auto tags = getImageTypeFromExt(*iter)) {
+          if (auto tags = getImageType(*iter)) {
             fileInfoCache.emplace(*iter, ImageInfo{*iter, *tags});
             ++iter;
           } else {
@@ -81,9 +80,8 @@ namespace brilliant {
           try {
             // immediately make the first one
             auto wallpaper = makeNextWallpaper(i);
-            const auto firstNow = std::chrono::system_clock::now();
-            const auto name = std::vformat(fileNameFormat,
-                                           std::make_format_args(i, firstNow));
+            const auto name = std::format(fileNameFormat, i,
+                                          std::chrono::system_clock::now());
             const auto outPath = tempDirectory / name;
             boost::gil::write_view(
                 outPath, boost::gil::const_view(wallpaper),
@@ -92,9 +90,8 @@ namespace brilliant {
 
             // prep the next
             wallpaper = makeNextWallpaper(i);
-            const auto secondNow = std::chrono::system_clock::now();
-            const auto nextName = std::vformat(
-                fileNameFormat, std::make_format_args(i, secondNow));
+            const auto nextName = std::format(fileNameFormat, i,
+                                              std::chrono::system_clock::now());
             boost::gil::write_view(
                 tempDirectory / nextName, boost::gil::const_view(wallpaper),
                 boost::gil::image_write_info<boost::gil::jpeg_tag>());
@@ -198,19 +195,22 @@ namespace brilliant {
           }
         }
 
-        setter.setWallpaper(monitorIndex, tempDirectory / name);
+        const auto currentWallpaperPath = tempDirectory / name;
+        setter.setWallpaper(monitorIndex, currentWallpaperPath);
 
         auto next = makeNextWallpaper(monitorIndex);
         const auto now = std::chrono::system_clock::now();
         const auto nextName = std::vformat(
             fileNameFormat, std::make_format_args(monitorIndex, now));
 
-        // sometimes this can be too quick for setWallpaper() and the new file
-        // will be deleted before the wallpaper is set so do it after we make
-        // the next wallpaper but before saving it
+        // Remove old files
         for (const auto& entry :
              std::filesystem::directory_iterator(tempDirectory)) {
-          std::filesystem::remove_all(entry);
+          if (entry.path() != currentWallpaperPath) {
+            log(severity_level::debug, "Removing item: {}",
+                entry.path().string());
+            std::filesystem::remove_all(entry);
+          }
         }
 
         boost::gil::write_view(
