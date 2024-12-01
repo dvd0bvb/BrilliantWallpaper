@@ -57,5 +57,5 @@ jobs:
 
     - name: Test
       working-directory: ${{ github.workspace }}/build
-      shell: ${{ matrix.shell }}
+      # shell: ${{ matrix.shell }}
       run: ctest --build-config ${{ matrix.build_type }}
