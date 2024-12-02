@@ -21,7 +21,7 @@ jobs:
 
     - name: Setup
       run: >
-        cmake -DCMAKE_TOOLCHAIN_FILE="$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" 
+        cmake -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" 
         -B build -S . 
 
     - name: Build      
